@@ -1,3 +1,12 @@
+/*          AUTHORS:
+ *  ----------------------
+ *        Connor Deahl
+ *       Ibrahim Aldualmi
+ *        Tristan Prebil
+ * 
+ * 
+ */
+
 import java.io.*;
 
 public class disassembler {
@@ -15,6 +24,7 @@ public class disassembler {
         }
     }
 
+    //read instructions from file
     private static int[] readInstructions(String filename) throws IOException {
         FileInputStream fis = new FileInputStream(filename);
         byte[] bytes = fis.readAllBytes();
@@ -35,6 +45,7 @@ public class disassembler {
         return instructions;
     }
 
+    //main printing loop and calls functions for decoding
     private static void disassemble(int[] instructions) {
         boolean[] isBranchTarget = new boolean[instructions.length];
         for (int i = 0; i < instructions.length; i++) {
@@ -61,6 +72,7 @@ public class disassembler {
         }
     }
 
+    //Get opcode from instruction, 11, 10, 8, and 6 bits.
     private static int getOpcode(int inst) {
         int opcode = (inst >>> 21) & 0x7FF;
         if (((opcode >>> 3) == 0x54) || ((opcode >>> 3) == 0xB4) || ((opcode >>> 3) == 0xB5)) {
@@ -72,6 +84,7 @@ public class disassembler {
         return opcode;
     }
 
+    //Using opcode, get associated mnemonic, and format as specified.
     private static String decodeInstruction(int inst, int instrCounter) {
         int opcode = getOpcode(inst);
         
@@ -134,7 +147,13 @@ public class disassembler {
         }
     }
 
-
+    /*
+     * The following functions are returning the instructions
+     * so that they match correct format and match 
+     * the inputbyte for byte.
+     */
+//--------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------
     private static String formatR(String instrName, int inst) {
         int rd = inst & 0x1F;
         int rn = (inst >>> 5) & 0x1F;
@@ -189,7 +208,11 @@ public class disassembler {
         }
         return String.format("B.%s Label%d", condStr, instrCounter + offset);
     }
+//--------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------
 
+    //Since no x31 in LEG, if register value is "11111"
+    //it is the zero register
     private static String isZeroReg(int regNum) {
         if(regNum == 31) {
             return "XZR";
